@@ -1,8 +1,8 @@
 // src/components/SignIn.tsx
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import type { AppDispatch } from "../reduxStateManagementFiles/store";
+import type { AppDispatch, RootAuthState } from "../reduxStateManagementFiles/store";
 import { login } from "../reduxStateManagementFiles/authSlice";
 
 import {
@@ -22,6 +22,7 @@ import { Separator } from "@/components/ui/separator";
 export default function SignIn() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const mode = useSelector((state: RootAuthState) => state.theme.mode);
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -53,7 +54,11 @@ export default function SignIn() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-muted/40 p-4">
+    <div
+      className={`flex items-center justify-center min-h-screen ${
+        mode === "light" ? "bg-gray-50 text-gray-900" : "bg-gray-950 text-gray-100"
+      } p-4`}
+    >
       <Card className="w-full max-w-sm shadow-md">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">Welcome Back</CardTitle>
@@ -99,7 +104,7 @@ export default function SignIn() {
             </Button>
 
             <p className="text-sm text-muted-foreground text-center">
-              Don’t have an account?{" "}
+              Don't have an account?{" "}
               <a href="/signup" className="font-medium underline underline-offset-4">
                 Sign up
               </a>

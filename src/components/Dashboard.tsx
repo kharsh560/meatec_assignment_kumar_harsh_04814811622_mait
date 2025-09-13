@@ -4,11 +4,11 @@ import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootAuthState } from "../reduxStateManagementFiles/store";
 import { deleteTask, setTasks, type Task } from "../reduxStateManagementFiles/taskSlice";
 import TaskForm from "./TaskForm";
+import Loading from "./Loader"; // Import the Loading component
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Dashboard() {
   const dispatch = useDispatch<AppDispatch>();
@@ -24,6 +24,10 @@ export default function Dashboard() {
       setLoading(true);
       const res = await fetch("/tasks");
       const data: Task[] = await res.json();
+
+      // Adding a fake delay to show loading component
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
       dispatch(setTasks(data));
       setLoading(false);
     };
@@ -57,17 +61,9 @@ export default function Dashboard() {
         <Button onClick={handleNew}>+ New Task</Button>
       </header>
 
-      {/* Tasks */}
+      {/* Loading State */}
       {loading ? (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Card key={i} className="p-4">
-              <Skeleton className="h-6 w-2/3 mb-2" />
-              <Skeleton className="h-4 w-full mb-2" />
-              <Skeleton className="h-4 w-1/2" />
-            </Card>
-          ))}
-        </div>
+        <Loading size="lg" text="Loading your tasks..." />
       ) : tasks.length === 0 ? (
         <p className="text-muted-foreground">No tasks yet. Create one!</p>
       ) : (
@@ -111,7 +107,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Modal for TaskForm (old inline approach) */}
+      {/* Modal for TaskForm */}
       {showForm && (
         <TaskForm existingTask={editTask || undefined} onClose={() => setShowForm(false)} />
       )}
