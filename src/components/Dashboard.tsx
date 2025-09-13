@@ -78,16 +78,22 @@ export default function Dashboard() {
                 <CardTitle className="text-lg">{task.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground">{task.description}</p>
+                <p className="text-sm text-muted-foreground mb-3">{task.description}</p>
                 <Badge
-                   variant={
-                    task.status === "done"
-                        ? "default"      // use default for success
-                        : task.status === "in-progress"
-                        ? "destructive"  // reuse destructive or outline for warning
-                        : "secondary"
-                    }
-                  className="mt-3"
+                  className={`${
+                        task.status === "done"
+                        ? mode === "light"
+                            ? "bg-green-500/20 border-2 border-green-600 text-green-800 hover:bg-green-500/30"
+                            : "bg-green-500/50 border-2 border-green-700 text-white hover:bg-green-500/60"
+                        : task.status === "pending"
+                        ? mode === "light"
+                            ? "bg-orange-500/20 border-2 border-orange-600 text-orange-800 hover:bg-orange-500/30"
+                            : "bg-orange-500/50 border-2 border-orange-700 text-white hover:bg-orange-500/60"
+                        : mode === "light"
+                        ? "bg-purple-500/20 border-2 border-purple-600 text-purple-800 hover:bg-purple-500/30"
+                        : "bg-purple-500/50 border-2 border-purple-700 text-white hover:bg-purple-500/60"
+                    } rounded-md px-3 py-1 font-medium`}
+
                 >
                   {task.status}
                 </Badge>
