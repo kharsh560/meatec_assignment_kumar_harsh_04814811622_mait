@@ -4,6 +4,9 @@ This project is a frontend-only task management application built with React, Ty
 
 The UI is built with Tailwind CSS and ShadCN components, featuring modals for task creation and editing, and a theme toggle for light and dark modes.
 
+#### I have hosted the dockerized container of this project and deployed it on render too, means its live. Please check: 
+#### "https://task-manager-using-msw.onrender.com/"
+
 ## Features
 
 * Mocked authentication with MSW (username: `test`, password: `test123`)
