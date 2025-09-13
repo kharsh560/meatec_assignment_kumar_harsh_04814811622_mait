@@ -2,15 +2,17 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootAuthState } from "../reduxStateManagementFiles/store";
-import { logout } from "../reduxStateManagementFiles/authSlice";
 import { deleteTask, setTasks, type Task } from "../reduxStateManagementFiles/taskSlice";
-
+import TaskForm from "./TaskForm";
 
 export default function Dashboard() {
   const dispatch = useDispatch<AppDispatch>();
   const { tasks } = useSelector((state: RootAuthState) => state.tasks);
   const mode = useSelector((state: RootAuthState) => state.theme.mode);
+
   const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editTask, setEditTask] = useState<Task | null>(null);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -28,6 +30,16 @@ export default function Dashboard() {
     dispatch(deleteTask(id));
   };
 
+  const handleEdit = (task: Task) => {
+    setEditTask(task);
+    setShowForm(true);
+  };
+
+  const handleNew = () => {
+    setEditTask(null);
+    setShowForm(true);
+  };
+
   const bgClass = mode === "light" ? "bg-gray-50 text-gray-900" : "bg-gray-900 text-gray-100";
   const cardClass = mode === "light" ? "bg-white" : "bg-gray-800";
 
@@ -35,6 +47,14 @@ export default function Dashboard() {
     <div className={`min-h-screen ${bgClass} p-6`}>
       <header className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-semibold">Dashboard</h1>
+        <div className="flex gap-3">
+          <button
+            onClick={handleNew}
+            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+          >
+            + New Task
+          </button>
+        </div>
       </header>
 
       {loading ? (
@@ -59,7 +79,10 @@ export default function Dashboard() {
                 {task.status}
               </span>
               <div className="mt-3 flex gap-2">
-                <button className="px-3 py-1 bg-indigo-500 text-white rounded text-sm hover:bg-indigo-600">
+                <button
+                  onClick={() => handleEdit(task)}
+                  className="px-3 py-1 bg-indigo-500 text-white rounded text-sm hover:bg-indigo-600"
+                >
                   Edit
                 </button>
                 <button
@@ -72,6 +95,14 @@ export default function Dashboard() {
             </div>
           ))}
         </div>
+      )}
+
+      {/* Modal */}
+      {showForm && (
+        <TaskForm
+          existingTask={editTask || undefined}
+          onClose={() => setShowForm(false)}
+        />
       )}
     </div>
   );

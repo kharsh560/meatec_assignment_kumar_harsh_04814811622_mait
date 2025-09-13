@@ -100,6 +100,23 @@ export default function SignIn() {
             Sign up
           </a>
         </p>
+
+        <div className="mt-6 text-sm rounded-md border px-4 py-3 
+                bg-gray-50 text-gray-600 dark:bg-gray-700 dark:text-gray-300 
+                border-gray-200 dark:border-gray-600">
+            <p className="font-medium mb-1">Test Credentials :</p>
+            <div className="space-y-0.5 text-xs">
+                <p>
+                <span className="font-semibold">Username:</span>{" "}
+                <span className="font-mono">test</span>
+                </p>
+                <p>
+                <span className="font-semibold">Password:</span>{" "}
+                <span className="font-mono">test123</span>
+                </p>
+            </div>
+        </div>
+
       </div>
     </div>
   );

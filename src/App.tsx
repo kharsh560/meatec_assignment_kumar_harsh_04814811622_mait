@@ -6,7 +6,6 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { useSelector } from "react-redux";
 import type { RootAuthState } from "./reduxStateManagementFiles/store";
 import { useEffect } from "react";
-import Navbar from "./components/Navbar";
 
 export default function App() {
     const mode = useSelector((state: RootAuthState) => state.theme.mode);
