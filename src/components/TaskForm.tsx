@@ -1,8 +1,26 @@
 // src/components/TaskForm.tsx
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch, RootAuthState } from "../reduxStateManagementFiles/store";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "../reduxStateManagementFiles/store";
 import { addTask, updateTask, type Task } from "../reduxStateManagementFiles/taskSlice";
+
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   existingTask?: Task;
@@ -11,7 +29,6 @@ type Props = {
 
 export default function TaskForm({ existingTask, onClose }: Props) {
   const dispatch = useDispatch<AppDispatch>();
-  const mode = useSelector((state: RootAuthState) => state.theme.mode);
 
   const [title, setTitle] = useState(existingTask?.title || "");
   const [description, setDescription] = useState(existingTask?.description || "");
@@ -39,48 +56,47 @@ export default function TaskForm({ existingTask, onClose }: Props) {
     onClose();
   };
 
-  const cardClass = mode === "light" ? "bg-white" : "bg-gray-800";
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-      <form
-        onSubmit={handleSubmit}
-        className={`w-full max-w-md ${cardClass} p-6 rounded-lg shadow-lg`}
-      >
-        <h2 className="text-xl font-semibold mb-4">
-          {existingTask ? "Edit Task" : "New Task"}
-        </h2>
-        <input
-          type="text"
-          placeholder="Title"
-          className="w-full p-2 border rounded mb-3"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <textarea
-          placeholder="Description"
-          className="w-full p-2 border rounded mb-3"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-        <select
-          className="w-full p-2 border rounded mb-3"
-          value={status}
-          onChange={(e) => setStatus(e.target.value as Task["status"])}
-        >
-          <option value="pending">Pending</option>
-          <option value="in-progress">In Progress</option>
-          <option value="done">Done</option>
-        </select>
-        <div className="flex justify-end gap-2">
-          <button type="button" onClick={onClose} className="px-3 py-1 bg-gray-300 rounded">
-            Cancel
-          </button>
-          <button type="submit" className="px-3 py-1 bg-indigo-600 text-white rounded">
-            {existingTask ? "Update" : "Create"}
-          </button>
-        </div>
-      </form>
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle>{existingTask ? "Edit Task" : "New Task"}</CardTitle>
+        </CardHeader>
+        <form onSubmit={handleSubmit}>
+          <CardContent className="space-y-4">
+            <Input
+              type="text"
+              placeholder="Title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+            />
+            <Textarea
+              placeholder="Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+            <Select value={status} onValueChange={(val) => setStatus(val as Task["status"])}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="in-progress">In Progress</SelectItem>
+                <SelectItem value="done">Done</SelectItem>
+              </SelectContent>
+            </Select>
+          </CardContent>
+          <CardFooter className="flex justify-end gap-2">
+            <Button variant="outline" type="button" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button type="submit">
+              {existingTask ? "Update" : "Create"}
+            </Button>
+          </CardFooter>
+        </form>
+      </Card>
     </div>
   );
 }

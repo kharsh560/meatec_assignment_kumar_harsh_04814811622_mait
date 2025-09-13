@@ -1,14 +1,27 @@
 // src/components/SignIn.tsx
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import type { AppDispatch, RootAuthState } from "../reduxStateManagementFiles/store";
+import type { AppDispatch } from "../reduxStateManagementFiles/store";
 import { login } from "../reduxStateManagementFiles/authSlice";
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Separator } from "@/components/ui/separator";
 
 export default function SignIn() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const mode = useSelector((state: RootAuthState) => state.theme.mode);
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -35,89 +48,80 @@ export default function SignIn() {
       localStorage.setItem("auth", JSON.stringify({ token: data.token, username }));
       navigate("/");
     } catch {
-      setError("Something went wrong");
+      setError("Something went wrong. Try again.");
     }
   };
 
-  const bgClass = mode === "light" ? "bg-gray-50 text-gray-900" : "bg-gray-900 text-gray-100";
-  const cardClass = mode === "light" ? "bg-white" : "bg-gray-800";
-
   return (
-    <div className={`flex items-center justify-center min-h-screen ${bgClass} px-4`}>
-      <div className={`w-full max-w-md ${cardClass} rounded-xl shadow-lg p-8`}>
-        {/* Header */}
-        <h2 className="text-2xl font-semibold text-center mb-2">
-          Welcome Back
-        </h2>
-        <p className="text-center text-sm text-gray-500 mb-6">
-          Sign in to your account
-        </p>
+    <div className="flex items-center justify-center min-h-screen bg-muted/40 p-4">
+      <Card className="w-full max-w-sm shadow-md">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold text-center">Welcome Back</CardTitle>
+          <CardDescription className="text-center">
+            Sign in to your account
+          </CardDescription>
+        </CardHeader>
 
-        {error && (
-          <p className="text-red-500 text-sm mb-4 text-center">{error}</p>
-        )}
+        <form onSubmit={handleSubmit}>
+          <CardContent className="space-y-4">
+            {error && (
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Username</label>
-            <input
-              type="text"
-              className={`w-full px-4 py-2 rounded-lg border ${
-                mode === "light"
-                  ? "border-gray-300 bg-gray-50 text-gray-900"
-                  : "border-gray-600 bg-gray-700 text-gray-100"
-              } focus:ring-2 focus:ring-indigo-500 outline-none`}
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-          </div>
+            <div className="space-y-2">
+              <Label htmlFor="username">Username</Label>
+              <Input
+                id="username"
+                type="text"
+                placeholder="Enter username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1">Password</label>
-            <input
-              type="password"
-              className={`w-full px-4 py-2 rounded-lg border ${
-                mode === "light"
-                  ? "border-gray-300 bg-gray-50 text-gray-900"
-                  : "border-gray-600 bg-gray-700 text-gray-100"
-              } focus:ring-2 focus:ring-indigo-500 outline-none`}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="Enter password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+          </CardContent>
 
-          <button
-            type="submit"
-            className="w-full py-2 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition"
-          >
-            Sign In
-          </button>
-        </form>
+          <CardFooter className="flex flex-col space-y-4 mt-6">
+            <Button type="submit" className="w-full">
+              Sign In
+            </Button>
 
-        <p className="text-center text-sm mt-6">
-          Don’t have an account?{" "}
-          <a href="/signup" className="text-indigo-600 hover:underline">
-            Sign up
-          </a>
-        </p>
+            <p className="text-sm text-muted-foreground text-center">
+              Don’t have an account?{" "}
+              <a href="/signup" className="font-medium underline underline-offset-4">
+                Sign up
+              </a>
+            </p>
 
-        <div className="mt-6 text-sm rounded-md border px-4 py-3 
-                bg-gray-50 text-gray-600 dark:bg-gray-700 dark:text-gray-300 
-                border-gray-200 dark:border-gray-600">
-            <p className="font-medium mb-1">Test Credentials :</p>
-            <div className="space-y-0.5 text-xs">
-                <p>
+            <Separator />
+
+            {/* Test credentials box */}
+            <div className="rounded-md border px-3 py-2 text-xs text-muted-foreground">
+              <p className="font-medium mb-1">💡 Test Credentials</p>
+              <p>
                 <span className="font-semibold">Username:</span>{" "}
                 <span className="font-mono">test</span>
-                </p>
-                <p>
+              </p>
+              <p>
                 <span className="font-semibold">Password:</span>{" "}
                 <span className="font-mono">test123</span>
-                </p>
+              </p>
             </div>
-        </div>
-
-      </div>
+          </CardFooter>
+        </form>
+      </Card>
     </div>
   );
 }

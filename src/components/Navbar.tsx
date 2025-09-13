@@ -4,6 +4,9 @@ import { logout } from "../reduxStateManagementFiles/authSlice";
 import { toggleTheme } from "../reduxStateManagementFiles/themeSlice";
 import type { RootAuthState, AppDispatch } from "../reduxStateManagementFiles/store";
 
+import { Button } from "@/components/ui/button";
+import { Moon, Sun, LogOut, CheckSquare } from "lucide-react";
+
 export default function Navbar() {
   const dispatch = useDispatch<AppDispatch>();
   const { isLoggedIn } = useSelector((state: RootAuthState) => state.auth);
@@ -16,40 +19,47 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`w-full px-6 py-4 flex justify-between items-center border-b ${
-        mode === "light"
-          ? "bg-white border-gray-200 text-gray-800"
-          : "bg-gray-800 border-gray-700 text-gray-100"
-      }`}
+      className={`sticky top-0 z-50 w-full border-b backdrop-blur-md 
+        ${mode === "light" ? "bg-white/80 border-gray-200" : "bg-gray-900/80 border-gray-800"}
+      `}
     >
-      {/* Logo */}
-      <div className="text-xl font-bold tracking-tight">
-        TaskManager
-      </div>
+      <div className="mx-auto px-6 py-3 flex justify-between items-center">
+        {/* Logo */}
+        <div className="flex items-center gap-2">
+          <CheckSquare className="h-6 w-6 text-indigo-600" />
+          <span className="text-lg font-bold tracking-tight">TaskManager</span>
+        </div>
 
-      {/* Right side */}
-      <div className="flex items-center gap-4">
-        {/* Theme Switcher */}
-        <button
-          onClick={() => dispatch(toggleTheme())}
-          className={`px-3 py-1.5 rounded-md border text-sm font-medium transition ${
-            mode === "light"
-              ? "bg-gray-100 border-gray-300 text-gray-800 hover:bg-gray-200"
-              : "bg-gray-700 border-gray-600 text-gray-200 hover:bg-gray-600"
-          }`}
-        >
-          {mode === "light" ? "🌙 Dark Mode" : "☀️ Light Mode"}
-        </button>
-
-        {/* Conditional Logout */}
-        {isLoggedIn && (
-          <button
-            onClick={handleLogout}
-            className="px-3 py-1.5 rounded-md bg-red-500 text-white text-sm font-medium hover:bg-red-600 transition"
+        {/* Right side actions */}
+        <div className="flex items-center gap-3">
+          {/* Theme Switcher */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => dispatch(toggleTheme())}
+            className="rounded-full"
           >
-            Sign Out
-          </button>
-        )}
+            {mode === "light" ? (
+              <Moon className="h-5 w-5" />
+            ) : (
+              <Sun className="h-5 w-5" />
+            )}
+            <span className="sr-only">Toggle theme</span>
+          </Button>
+
+          {/* Conditional Logout */}
+          {isLoggedIn && (
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={handleLogout}
+              className="flex items-center gap-2 rounded-full px-4"
+            >
+              <LogOut className="h-4 w-4" />
+              Sign Out
+            </Button>
+          )}
+        </div>
       </div>
     </nav>
   );

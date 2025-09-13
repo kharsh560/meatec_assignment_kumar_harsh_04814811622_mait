@@ -5,6 +5,11 @@ import type { AppDispatch, RootAuthState } from "../reduxStateManagementFiles/st
 import { deleteTask, setTasks, type Task } from "../reduxStateManagementFiles/taskSlice";
 import TaskForm from "./TaskForm";
 
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+
 export default function Dashboard() {
   const dispatch = useDispatch<AppDispatch>();
   const { tasks } = useSelector((state: RootAuthState) => state.tasks);
@@ -40,69 +45,69 @@ export default function Dashboard() {
     setShowForm(true);
   };
 
-  const bgClass = mode === "light" ? "bg-gray-50 text-gray-900" : "bg-gray-900 text-gray-100";
-  const cardClass = mode === "light" ? "bg-white" : "bg-gray-800";
-
   return (
-    <div className={`min-h-screen ${bgClass} p-6`}>
+    <div
+      className={`min-h-screen ${
+        mode === "light" ? "bg-gray-50 text-gray-900" : "bg-gray-950 text-gray-100"
+      } p-6`}
+    >
+      {/* Header */}
       <header className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-semibold">Dashboard</h1>
-        <div className="flex gap-3">
-          <button
-            onClick={handleNew}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
-          >
-            + New Task
-          </button>
-        </div>
+        <Button onClick={handleNew}>+ New Task</Button>
       </header>
 
+      {/* Tasks */}
       {loading ? (
-        <p>Loading tasks...</p>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Card key={i} className="p-4">
+              <Skeleton className="h-6 w-2/3 mb-2" />
+              <Skeleton className="h-4 w-full mb-2" />
+              <Skeleton className="h-4 w-1/2" />
+            </Card>
+          ))}
+        </div>
       ) : tasks.length === 0 ? (
-        <p className="text-gray-500">No tasks yet. Create one!</p>
+        <p className="text-muted-foreground">No tasks yet. Create one!</p>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {tasks.map((task) => (
-            <div key={task.id} className={`p-4 rounded-lg shadow ${cardClass}`}>
-              <h2 className="font-semibold">{task.title}</h2>
-              <p className="text-sm text-gray-400">{task.description}</p>
-              <span
-                className={`inline-block mt-2 text-xs px-2 py-1 rounded ${
-                  task.status === "done"
-                    ? "bg-green-100 text-green-700"
-                    : task.status === "in-progress"
-                    ? "bg-yellow-100 text-yellow-700"
-                    : "bg-gray-200 text-gray-700"
-                }`}
-              >
-                {task.status}
-              </span>
-              <div className="mt-3 flex gap-2">
-                <button
-                  onClick={() => handleEdit(task)}
-                  className="px-3 py-1 bg-indigo-500 text-white rounded text-sm hover:bg-indigo-600"
+            <Card key={task.id} className="flex flex-col justify-between">
+              <CardHeader>
+                <CardTitle className="text-lg">{task.title}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">{task.description}</p>
+                <Badge
+                   variant={
+                    task.status === "done"
+                        ? "default"      // use default for success
+                        : task.status === "in-progress"
+                        ? "destructive"  // reuse destructive or outline for warning
+                        : "secondary"
+                    }
+                  className="mt-3"
                 >
+                  {task.status}
+                </Badge>
+              </CardContent>
+              <CardFooter className="flex gap-2">
+                <Button variant="outline" size="sm" onClick={() => handleEdit(task)}>
                   Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(task.id)}
-                  className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
-                >
+                </Button>
+                <Button variant="destructive" size="sm" onClick={() => handleDelete(task.id)}>
                   Delete
-                </button>
-              </div>
-            </div>
+                </Button>
+              </CardFooter>
+            </Card>
           ))}
         </div>
       )}
 
-      {/* Modal */}
+      {/* Modal for TaskForm (old inline approach) */}
       {showForm && (
-        <TaskForm
-          existingTask={editTask || undefined}
-          onClose={() => setShowForm(false)}
-        />
+        <TaskForm existingTask={editTask || undefined} onClose={() => setShowForm(false)} />
       )}
     </div>
   );
